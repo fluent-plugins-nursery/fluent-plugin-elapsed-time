@@ -1,6 +1,6 @@
-# fluent-plugin-measure-time
+# fluent-plugin-elapsed-time
 
-[![Build Status](https://secure.travis-ci.org/sonots/fluent-plugin-measure-time.png?branch=master)](http://travis-ci.org/sonots/fluent-plugin-measure-time)
+[![Build Status](https://secure.travis-ci.org/sonots/fluent-plugin-elapsed-time.png?branch=master)](http://travis-ci.org/sonots/fluent-plugin-elapsed-time)
 
 Fluentd plugin to measure elapsed time to process messages
 
@@ -8,7 +8,7 @@ Fluentd plugin to measure elapsed time to process messages
 
 Use RubyGems:
 
-    gem install fluent-plugin-measure-time
+    gem install fluent-plugin-elapsed-time
 
 ## Configuration
 
@@ -18,8 +18,8 @@ Following example measures the max and average time taken to process [fluent-plu
 
 ```apache
 <match **>
-  type measure_time
-  tag measure_time
+  type elapsed_time
+  tag elapsed
   interval 60
   <store>
     type grep
@@ -40,7 +40,7 @@ Following example measures the max and average time taken to process [fluent-plu
   type stdout
 </match>
 
-<match measure_time>
+<match elapsed>
   type stdout
 </match>
 ```
@@ -49,7 +49,7 @@ Following example measures the max and average time taken to process [fluent-plu
 
 * tag
 
-    The output tag name
+    The output tag name. Default is `elapsed`
 
 * interval
 

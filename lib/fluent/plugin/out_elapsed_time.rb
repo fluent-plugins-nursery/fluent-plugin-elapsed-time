@@ -1,8 +1,8 @@
 module Fluent
-  class MeasureTimeOutput < MultiOutput
-    Plugin.register_output('measure_time', self)
+  class ElapsedTimeOutput < MultiOutput
+    Plugin.register_output('elapsed_time', self)
 
-    config_param :tag, :string, :default => 'measure_time'
+    config_param :tag, :string, :default => 'elapsed'
     config_param :interval, :time, :default => 60
     config_param :each, :default => :es do |val|
       case val.downcase
@@ -11,7 +11,7 @@ module Fluent
       when 'message'
         :message
       else
-        raise ConfigError, "out_measure_time: each should be 'es' or 'message'"
+        raise ConfigError, "out_elapsed_time: each should be 'es' or 'message'"
       end
     end 
 

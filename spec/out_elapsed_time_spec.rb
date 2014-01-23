@@ -14,7 +14,7 @@ class Hash
   end
 end
 
-describe Fluent::MeasureTimeOutput do
+describe Fluent::ElapsedTimeOutput do
   before { Fluent::Test.setup }
   CONFIG = %[
     tag tag
@@ -25,7 +25,7 @@ describe Fluent::MeasureTimeOutput do
     </store>
   ]
   let(:tag) { 'syslog.host1' }
-  let(:driver) { Fluent::Test::OutputTestDriver.new(Fluent::MeasureTimeOutput, tag).configure(config) }
+  let(:driver) { Fluent::Test::OutputTestDriver.new(Fluent::ElapsedTimeOutput, tag).configure(config) }
 
   describe 'test configure' do
     describe 'bad configuration' do
@@ -40,7 +40,7 @@ describe Fluent::MeasureTimeOutput do
 
       context "check default" do
         let(:config) { %[] }
-        its(:tag) { should == 'measure_time' }
+        its(:tag) { should == 'elapsed' }
         its(:interval) { should == 60 }
         its(:each) { should == :es }
       end

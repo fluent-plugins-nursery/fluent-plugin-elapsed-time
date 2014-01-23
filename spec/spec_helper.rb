@@ -10,4 +10,4 @@ require 'pry'
 
 $TESTING=true
 $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
-require 'fluent/plugin/out_measure_time'
+require 'fluent/plugin/out_elapsed_time'
