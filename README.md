@@ -1,23 +1,25 @@
-# fluent-plugin-performance
+# fluent-plugin-measure-time
 
-[![Build Status](https://secure.travis-ci.org/sonots/fluent-plugin-performance.png?branch=master)](http://travis-ci.org/sonots/fluent-plugin-performance)
+[![Build Status](https://secure.travis-ci.org/sonots/fluent-plugin-measure-time.png?branch=master)](http://travis-ci.org/sonots/fluent-plugin-measure-time)
 
-Fluentd plugin to measure performance to process messages
+Fluentd plugin to measure elapsed time to process messages
 
 ## Installation
 
 Use RubyGems:
 
-    gem install fluent-plugin-performance
+    gem install fluent-plugin-measure-time
 
 ## Configuration
 
 Example:
 
+Following example measures the max and average time taken to process [fluent-plugin-grep](https://github.com/sonots/fluent-plugin-grep) => [fluent-plugin-parser](https://github.com/tagomoris/fluent-plugin-parser) => out_stdout chain in messages. Please notice that this plugin measures the total processing time until match chain finishes.
+
 ```apache
 <match **>
-  type performance
-  tag performance
+  type measure_time
+  tag measure_time
   interval 60
   <store>
     type grep
@@ -38,12 +40,10 @@ Example:
   type stdout
 </match>
 
-<match perforamnce>
+<match measure_time>
   type stdout
 </match>
 ```
-
-Notice that this examples measures the total time taken to process [fluent-plugin-grep](https://github.com/sonots/fluent-puglin-grep) **and** [fluent-plugin-parser](https://github.com/tagomoris/fluent-plugin-parser), **and** out_stdout.
 
 ## Option Parameters
 
@@ -54,6 +54,10 @@ Notice that this examples measures the total time taken to process [fluent-plugi
 * interval
 
     The time interval to emit measurement results
+
+* each
+
+    Measure time for each `message` or `es` (event stream). Please notice that the event stream (would be a msgpack) will be unpacked if `message` is specified, which would cause performance degradation. Default is `es`.
 
 ## ChangeLog
 

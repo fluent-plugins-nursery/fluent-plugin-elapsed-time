@@ -14,7 +14,7 @@ class Hash
   end
 end
 
-describe Fluent::PerformanceOutput do
+describe Fluent::MeasureTimeOutput do
   before { Fluent::Test.setup }
   CONFIG = %[
     tag tag
@@ -25,7 +25,7 @@ describe Fluent::PerformanceOutput do
     </store>
   ]
   let(:tag) { 'syslog.host1' }
-  let(:driver) { Fluent::Test::OutputTestDriver.new(Fluent::PerformanceOutput, tag).configure(config) }
+  let(:driver) { Fluent::Test::OutputTestDriver.new(Fluent::MeasureTimeOutput, tag).configure(config) }
 
   describe 'test configure' do
     describe 'bad configuration' do
@@ -40,7 +40,7 @@ describe Fluent::PerformanceOutput do
 
       context "check default" do
         let(:config) { %[] }
-        its(:tag) { should == 'performance' }
+        its(:tag) { should == 'measure_time' }
         its(:interval) { should == 60 }
         its(:each) { should == :es }
       end
@@ -65,8 +65,19 @@ describe Fluent::PerformanceOutput do
       ]
     end
 
-    context 'default' do
-      let(:config) { CONFIG }
+    context 'each message' do
+      let(:config) { CONFIG + %[each message]}
+      before do
+        Fluent::Engine.stub(:now).and_return(time)
+      end
+      it {
+        driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
+        driver.instance.elapsed.size.should == 4
+      }
+    end
+
+    context 'each es' do
+      let(:config) { CONFIG + %[each es]}
       before do
         Fluent::Engine.stub(:now).and_return(time)
       end

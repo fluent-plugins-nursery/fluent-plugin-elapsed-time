@@ -1,8 +1,8 @@
 module Fluent
-  class PerformanceOutput < MultiOutput
-    Plugin.register_output('performance', self)
+  class MeasureTimeOutput < MultiOutput
+    Plugin.register_output('measure_time', self)
 
-    config_param :tag, :string, :default => 'performance'
+    config_param :tag, :string, :default => 'measure_time'
     config_param :interval, :time, :default => 60
     config_param :each, :default => :es do |val|
       case val.downcase
@@ -11,7 +11,7 @@ module Fluent
       when 'message'
         :message
       else
-        raise ConfigError, "out_performance: each should be 'es' or 'message'"
+        raise ConfigError, "out_measure_time: each should be 'es' or 'message'"
       end
     end 
 
@@ -38,6 +38,27 @@ module Fluent
         output.configure(e)
         @outputs << output
       }
+
+      @emit_proc =
+        if @each == :message
+          chain = NullOutputChain.instance
+          Proc.new {|tag, es|
+            start = Time.now
+            es.each do |time, record|
+              @outputs.each {|output| output.emit(tag, OneEventStream.new(time, record), chain) }
+              finish = Time.now
+              @elapsed << (finish - start).to_f
+              start = finish
+            end
+          }
+        else
+          chain = NullOutputChain.instance
+          Proc.new {|tag, es|
+            t = Time.now
+            @outputs.each {|output| output.emit(tag, es, chain) }
+            @elapsed << (Time.now - t).to_f
+          }
+        end
     end
 
     def start
@@ -71,34 +92,13 @@ module Fluent
       unless elapsed.empty?
         max = elapsed.max
         num = elapsed.size
-        avg = elapsed.inject(:+) / num.to_f
+        avg = elapsed.map(&:to_f).inject(:+) / num.to_f
         Engine.emit(@tag, Engine.now, {:max => max, :avg => avg, :num => num})
       end
     end
 
-    def measure_time(&blk)
-      t = Time.now
-      output = yield
-      @elapsed << (Time.now - t).to_f
-      output
-    end
-
     def emit(tag, es, chain)
-      if @each == :message
-        es.each do |time, record|
-          measure_time {
-            @outputs.each do |output|
-              output.emit(tag, OneEventStream.new(time, record), NullOutputChain.instance)
-            end
-          }
-        end
-      else
-        measure_time {
-          @outputs.each do |output|
-            output.emit(tag, es, NullOutputChain.instance)
-          end
-        }
-      end
+      @emit_proc.call(tag, es)
       chain.next
     end
   end
