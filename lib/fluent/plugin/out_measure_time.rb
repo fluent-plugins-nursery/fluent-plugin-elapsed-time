@@ -93,7 +93,7 @@ module Fluent
         max = elapsed.max
         num = elapsed.size
         avg = elapsed.map(&:to_f).inject(:+) / num.to_f
-        Engine.emit(@tag, Engine.now, {:max => max, :avg => avg, :num => num})
+        Engine.emit(@tag, Engine.now, {"max" => max, "avg" => avg, "num" => num})
       end
     end
 
