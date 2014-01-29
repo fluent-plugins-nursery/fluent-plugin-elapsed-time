@@ -5,6 +5,7 @@ module Fluent
     config_param :tag, :string, :default => 'elapsed'
     config_param :add_tag_prefix, :string, :default => nil
     config_param :remove_tag_prefix, :string, :default => nil
+    config_param :remove_tag_slice, :string, :default => nil
     config_param :aggregate, :string, :default => 'all'
     config_param :interval, :time, :default => 60
     config_param :each, :default => :es do |val|
@@ -56,19 +57,31 @@ module Fluent
         raise ConfigError, "out_elapsed_time: aggregate allows `tag` or `all`"
       end
 
+      @tag_slice_proc =
+        if @remove_tag_slice
+          lindex, rindex = @remove_tag_slice.split('..', 2)
+          if lindex.nil? or rindex.nil? or lindex !~ /^-?\d+$/ or rindex !~ /^-?\d+$/
+            raise Fluent::ConfigError, "out_elapsed_time: remove_tag_slice must be formatted like [num]..[num]"
+          end
+          l, r = lindex.to_i, rindex.to_i
+          Proc.new {|tag| (tags = tag.split('.')[l..r]).nil? ? "" : tags.join('.') }
+        else
+          Proc.new {|tag| tag }
+        end
+
       @tag_prefix = "#{@add_tag_prefix}." if @add_tag_prefix
       @tag_prefix_match = "#{@remove_tag_prefix}." if @remove_tag_prefix
       @tag_proc =
         if @tag_prefix and @tag_prefix_match
-          Proc.new {|tag| "#{@tag_prefix}#{lstrip(tag, @tag_prefix_match)}" }
+          Proc.new {|tag| "#{@tag_prefix}#{lstrip(@tag_slice_proc.call(tag), @tag_prefix_match)}" }
         elsif @tag_prefix_match
-          Proc.new {|tag| lstrip(tag, @tag_prefix_match) }
+          Proc.new {|tag| lstrip(@tag_slice_proc.call(tag), @tag_prefix_match) }
         elsif @tag_prefix
-          Proc.new {|tag| "#{@tag_prefix}#{tag}" }
+          Proc.new {|tag| "#{@tag_prefix}#{@tag_slice_proc.call(tag)}" }
         elsif @tag
           Proc.new {|tag| @tag }
         else
-          Proc.new {|tag| tag }
+          Proc.new {|tag| @tag_slice_proc.call(tag) }
         end
 
       @push_elapsed_proc =
@@ -88,7 +101,7 @@ module Fluent
               @outputs.each {|output| output.emit(tag, OneEventStream.new(time, record), chain) }
               finish = Time.now
               elapsed = (finish - start).to_f
-              @push_elapsed_proc.call(tag, elapsed)
+              @push_elapsed_proc.call(@tag_proc.call(tag), elapsed)
               start = finish
             end
           }
@@ -98,7 +111,7 @@ module Fluent
             t = Time.now
             @outputs.each {|output| output.emit(tag, es, chain) }
             elapsed = (Time.now - t).to_f
-            @push_elapsed_proc.call(tag, elapsed)
+            @push_elapsed_proc.call(@tag_proc.call(tag), elapsed)
           }
         end
     end
@@ -136,8 +149,7 @@ module Fluent
           max = elapsed.max
           num = elapsed.size
           avg = elapsed.map(&:to_f).inject(:+) / num.to_f
-          emit_tag = @tag_proc.call(tag)
-          Engine.emit(emit_tag, Engine.now, {"max" => max, "avg" => avg, "num" => num})
+          Engine.emit(tag, Engine.now, {"max" => max, "avg" => avg, "num" => num})
         end
       end
     end
