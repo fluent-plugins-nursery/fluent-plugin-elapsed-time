@@ -67,28 +67,22 @@ Following example measures the max and average time taken to process [fluent-plu
 
     Remove tag prefix for output message
 
+* remove_tag_slice *min..max*
+
+    Remove tag parts by slice function. FYI: This option behaves like `tag.split('.').slice(min..max)`.
+
+    For example,
+
+        remove_tag_slice 0..-2
+
+    changes an input tag `foo.bar.host1` to `foo.bar`. 
+
 * aggregate
 
-    Measure and emit outputs for each `tag` or `all`. The default value is `all`.
+    Measure and emit outputs for each `tag` or `all`. Default is `all`.
 
-* aggregate_tag_slice *min..max*
-
-    Use sliced tag as a key to measure for `aggregate tag`. Default: use entire tag.
-
-    For example, assume tags of input messages are like
-
-        foo.bar.host1
-        foo.bar.host2
-
-    but, you want to measure `max` and `avg` elapsed time for each tag discarding the hostname parts like
-
-        foo.bar
-
-    then, configure as
-
-        aggregate_tag_slice 0..-2
-
-    FYI: This option behaves like `tag.split('.').slice(min..max)`.
+    `aggregate all` measures `max` and `avg` elapsed time for all input messages.
+    `aggregate tag` measures `max` and `avg` elapsed times for each *modified* tag by `add_tag_prefix`, `remove_tag_prefix`, or `remove_tag_slice`. 
 
 ## ChangeLog
 
