@@ -47,10 +47,6 @@ Following example measures the max and average time taken to process [fluent-plu
 
 ## Option Parameters
 
-* tag
-
-    The output tag name. Default is `elapsed`
-
 * interval
 
     The time interval to emit measurement results
@@ -58,6 +54,41 @@ Following example measures the max and average time taken to process [fluent-plu
 * each
 
     Measure time for each `message` or `es` (event stream). Please notice that the event stream (would be a msgpack) will be unpacked if `message` is specified, which would cause performance degradation. Default is `es`.
+
+* tag
+
+    The output tag name. Default is `elapsed`
+
+* add_tag_prefix
+
+    Add tag prefix for output message
+
+* remove_tag_prefix
+
+    Remove tag prefix for output message
+
+* aggregate
+
+    Measure and emit outputs for each `tag` or `all`. The default value is `all`.
+
+* aggregate_tag_slice *min..max*
+
+    Use sliced tag as a key to measure for `aggregate tag`. Default: use entire tag.
+
+    For example, assume tags of input messages are like
+
+        foo.bar.host1
+        foo.bar.host2
+
+    but, you want to measure `max` and `avg` elapsed time for each tag discarding the hostname parts like
+
+        foo.bar
+
+    then, configure as
+
+        aggregate_tag_slice 0..-2
+
+    FYI: This option behaves like `tag.split('.').slice(min..max)`.
 
 ## ChangeLog
 
