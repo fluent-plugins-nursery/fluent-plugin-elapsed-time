@@ -56,10 +56,6 @@ where `max` and `avg` are the maximum and average elapsed times, and `num` is th
 
 ## Option Parameters
 
-* tag
-
-    The output tag name. Default is `elapsed`
-
 * interval
 
     The time interval to emit measurement results
@@ -67,6 +63,35 @@ where `max` and `avg` are the maximum and average elapsed times, and `num` is th
 * each
 
     Measure time for each `message` or `es` (event stream). Please notice that the event stream (would be a msgpack) will be unpacked if `message` is specified, which would cause performance degradation. Default is `es`.
+
+* tag
+
+    The output tag name. Default is `elapsed`
+
+* add_tag_prefix
+
+    Add tag prefix for output message
+
+* remove_tag_prefix
+
+    Remove tag prefix for output message
+
+* remove_tag_slice *min..max*
+
+    Remove tag parts by slice function. FYI: This option behaves like `tag.split('.').slice(min..max)`.
+
+    For example,
+
+        remove_tag_slice 0..-2
+
+    changes an input tag `foo.bar.host1` to `foo.bar`. 
+
+* aggregate
+
+    Measure and emit outputs for each `tag` or `all`. Default is `all`.
+
+    `all` measures `max` and `avg` for all input messages.
+    `tag` measures `max` and `avg` for each tag *modified* by `add_tag_prefix`, `remove_tag_prefix`, or `remove_tag_slice`. 
 
 ## ChangeLog
 
