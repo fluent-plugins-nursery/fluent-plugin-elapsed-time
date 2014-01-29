@@ -21,6 +21,7 @@ Following example measures the max and average time taken to process [fluent-plu
   type elapsed_time
   tag elapsed
   interval 60
+  each message
   <store>
     type grep
     exclude foobar
@@ -44,6 +45,14 @@ Following example measures the max and average time taken to process [fluent-plu
   type stdout
 </match>
 ```
+
+Output will be like
+
+```
+elapsed: {"max":1.011,"avg":0.002","num":10}
+```
+
+where `max` and `avg` are the maximum and average elapsed times, and `num` is the number of messages.
 
 ## Option Parameters
 
