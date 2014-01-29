@@ -86,5 +86,40 @@ describe Fluent::ElapsedTimeOutput do
         driver.instance.elapsed.size.should == 4
       }
     end
+
+    context 'each message with aggregate tag' do
+      let(:config) { CONFIG + %[each message\naggregate tag\nadd_tag_prefix elapsed]}
+      before do
+        Fluent::Engine.stub(:now).and_return(time)
+      end
+      it {
+        driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
+        driver.instance.elapsed("elapsed.#{tag}").size.should == 4
+      }
+    end
+
+    context 'each es with aggregate tag' do
+      let(:config) { CONFIG + %[each es\naggregate tag\nadd_tag_prefix elapsed]}
+      before do
+        Fluent::Engine.stub(:now).and_return(time)
+      end
+      it {
+        driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
+        driver.instance.elapsed("elapsed.#{tag}").size.should == 4
+        driver.instance.flush_emit
+      }
+    end
+
+    context 'remove_tag_slice' do
+      let(:config) { CONFIG + %[remove_tag_slice 0..-2\naggregate tag\nadd_tag_prefix elapsed]}
+      before do
+        Fluent::Engine.stub(:now).and_return(time)
+      end
+      let(:expected_tag) { tag.split('.')[0..-2].join('.') }
+      it {
+        driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
+        driver.instance.elapsed("elapsed.#{expected_tag}").size.should == 4
+      }
+    end
   end
 end
