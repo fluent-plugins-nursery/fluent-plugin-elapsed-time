@@ -121,5 +121,17 @@ describe Fluent::ElapsedTimeOutput do
         driver.instance.elapsed("elapsed.#{expected_tag}").size.should == 4
       }
     end
+
+    context 'add_tag_suffix' do
+      let(:config) { CONFIG + %[remove_tag_slice 0..-2\naggregate tag\nadd_tag_suffix elapsed]}
+      before do
+        Fluent::Engine.stub(:now).and_return(time)
+      end
+      let(:expected_tag) { tag.split('.')[0..-2].join('.') }
+      it {
+        driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
+        driver.instance.elapsed("#{expected_tag}.elapsed").size.should == 4
+      }
+    end
   end
 end

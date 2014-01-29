@@ -63,6 +63,10 @@ Following example measures the max and average time taken to process [fluent-plu
 
     Add tag prefix for output message
 
+* add_tag_suffix
+
+    Add tag suffix for output message
+
 * remove_tag_prefix
 
     Remove tag prefix for output message

@@ -4,6 +4,7 @@ module Fluent
 
     config_param :tag, :string, :default => 'elapsed'
     config_param :add_tag_prefix, :string, :default => nil
+    config_param :add_tag_suffix, :string, :default => nil
     config_param :remove_tag_prefix, :string, :default => nil
     config_param :remove_tag_slice, :string, :default => nil
     config_param :aggregate, :string, :default => 'all'
@@ -52,7 +53,9 @@ module Fluent
       when 'all'
         raise ConfigError, "out_elapsed_time: `tag` must be specified with aggregate all" if @tag.nil?
       when 'tag'
-        raise ConfigError, "out_elapsed_time: `add_tag_prefix` or `remove_tag_prefix` must be specified with aggregate tag" if @add_tag_prefix.nil? and @remove_tag_prefix.nil?
+        if @add_tag_prefix.nil? and @add_tag_suffix.nil? and @remove_tag_prefix.nil? and @remove_tag_slice.nil?
+          raise ConfigError, "out_elapsed_time: One of `add_tag_prefix`, `add_tag_suffix`, `remove_tag_prefix`, `remove_tag_slice`  must be specified for `aggregate tag`"
+        end
       else
         raise ConfigError, "out_elapsed_time: aggregate allows `tag` or `all`"
       end
@@ -70,18 +73,15 @@ module Fluent
         end
 
       @tag_prefix = "#{@add_tag_prefix}." if @add_tag_prefix
+      @tag_suffix = ".#{@add_tag_suffix}" if @add_tag_suffix
       @tag_prefix_match = "#{@remove_tag_prefix}." if @remove_tag_prefix
       @tag_proc =
-        if @tag_prefix and @tag_prefix_match
-          Proc.new {|tag| "#{@tag_prefix}#{lstrip(@tag_slice_proc.call(tag), @tag_prefix_match)}" }
-        elsif @tag_prefix_match
-          Proc.new {|tag| lstrip(@tag_slice_proc.call(tag), @tag_prefix_match) }
-        elsif @tag_prefix
-          Proc.new {|tag| "#{@tag_prefix}#{@tag_slice_proc.call(tag)}" }
-        elsif @tag
-          Proc.new {|tag| @tag }
+        if @tag_prefix_match
+          Proc.new {|tag| "#{@tag_prefix}#{lstrip(@tag_slice_proc.call(tag), @tag_prefix_match)}#{@tag_suffix}" }
+        elsif @tag_prefix or @tag_suffix or @remove_tag_slice
+          Proc.new {|tag| "#{@tag_prefix}#{@tag_slice_proc.call(tag)}#{@tag_suffix}" }
         else
-          Proc.new {|tag| @tag_slice_proc.call(tag) }
+          Proc.new {|tag| @tag }
         end
 
       @push_elapsed_proc =
