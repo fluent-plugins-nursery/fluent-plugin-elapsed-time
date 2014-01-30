@@ -93,6 +93,14 @@ where `max` and `avg` are the maximum and average elapsed times, and `num` is th
     `all` measures `max` and `avg` for all input messages.
     `tag` measures `max` and `avg` for each tag *modified* by `add_tag_prefix`, `remove_tag_prefix`, or `remove_tag_slice`. 
 
+* zero_emit *bool*
+
+    Emit 0 on the next interval. This is useful for some software which requires resetting data such as [GrowthForecast](http://kazeburo.github.io/GrowthForecast).
+
+        elapsed: {"max":1.013,"avg":0.123,"num"=>0}
+        # after @interval later
+        elapsed: {"max":0,"avg":0,"num"=>0}
+
 ## ChangeLog
 
 See [CHANGELOG.md](CHANGELOG.md) for details.

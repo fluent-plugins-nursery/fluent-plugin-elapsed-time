@@ -17,9 +17,6 @@ end
 describe Fluent::ElapsedTimeOutput do
   before { Fluent::Test.setup }
   CONFIG = %[
-    tag tag
-    interval 120
-    each message
     <store>
       type stdout
     </store>
@@ -46,7 +43,7 @@ describe Fluent::ElapsedTimeOutput do
       end
 
       context "check config" do
-        let(:config) { CONFIG }
+        let(:config) { CONFIG + %[tag tag\ninterval 120\neach message]}
         its(:tag) { should == 'tag' }
         its(:interval) { should == 120 }
         its(:each) { should == :message }
@@ -119,6 +116,30 @@ describe Fluent::ElapsedTimeOutput do
       it {
         driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
         driver.instance.elapsed("elapsed.#{expected_tag}").size.should == 4
+      }
+    end
+
+    context 'zero_emit true' do
+      let(:config) { CONFIG + %[zero_emit true]}
+      before do
+        Fluent::Engine.stub(:now).and_return(time)
+      end
+      it {
+        driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
+        driver.instance.flush_emit["elapsed"]["num"].should == 4
+        driver.instance.flush_emit["elapsed"].should == {"max" => 0, "avg" => 0, "num" => 0}
+      }
+    end
+
+    context 'zero_emit false' do
+      let(:config) { CONFIG }
+      before do
+        Fluent::Engine.stub(:now).and_return(time)
+      end
+      it {
+        driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
+        driver.instance.flush_emit["elapsed"]["num"].should == 4
+        driver.instance.flush_emit.should == {}
       }
     end
   end
