@@ -1,3 +1,9 @@
+## 0.0.4  (2014/01/30)
+
+Enhancement:
+
+* Add `zero_emit` option
+
 ## 0.0.3  (2014/01/30)
 
 Enhancement:
