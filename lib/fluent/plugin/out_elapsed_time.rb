@@ -2,6 +2,11 @@ module Fluent
   class ElapsedTimeOutput < MultiOutput
     Plugin.register_output('elapsed_time', self)
 
+    # To support log_level option implemented by Fluentd v0.10.43
+    unless method_defined?(:log)
+      define_method("log") { $log }
+    end
+
     config_param :tag, :string, :default => 'elapsed'
     config_param :add_tag_prefix, :string, :default => nil
     config_param :remove_tag_prefix, :string, :default => nil
@@ -42,7 +47,7 @@ module Fluent
         unless type
           raise ConfigError, "Missing 'type' parameter on <store> directive"
         end
-        $log.debug "adding store type=#{type.dump}"
+        log.debug "adding store type=#{type.dump}"
 
         output = Plugin.new_output(type)
         output.configure(e)
