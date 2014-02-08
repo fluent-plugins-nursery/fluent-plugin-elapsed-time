@@ -1,4 +1,4 @@
-# fluent-plugin-elapsed-time
+# fluent-plugin-elapsed-time, a plugin for [Fluentd](http://fluentd.org)
 
 [![Build Status](https://secure.travis-ci.org/sonots/fluent-plugin-elapsed-time.png?branch=master)](http://travis-ci.org/sonots/fluent-plugin-elapsed-time)
 
