@@ -10,6 +10,26 @@ Use RubyGems:
 
     gem install fluent-plugin-elapsed-time
 
+## Illustration
+
+This illustration draws how fluent-plugin-elapsed-time works.
+
+```
+  +–––––––––––––+    +––––––––––––––+   +––––––––––––––+
+  |   Input     |    |  ElapsedTime |   |   Output     |
+  +––––––+––––––+    +––––––+–––––––+   +––––––+–––––––+
+         |                  |                  |        
+on_read  +––––––––––––––––––+                  |        
+         |      #emit       | s = Time.now     |        
+         |                  +––––––––––––––––––+        
+         |                  |       #emit      |        
+         |                  +––––––––––––––––––+        
+         |                  | Time.now - s     |        
+         +––––––––––––––––––+                  |         
+         |                  |                  |        
+         +                  +                  +
+```
+
 ## Configuration
 
 Example:
