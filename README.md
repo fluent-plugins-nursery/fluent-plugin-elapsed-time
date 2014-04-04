@@ -18,8 +18,8 @@ This illustration draws how fluent-plugin-elapsed-time works.
   +–––––––––––––+    +––––––––––––––+   +––––––––––––––+
   |   Input     |    |  ElapsedTime |   |   Output     |
   +––––––+––––––+    +––––––+–––––––+   +––––––+–––––––+
-         |                  |                  |        
-on_read  +––––––––––––––––––+                  |        
+#on_read |                  |                  |        
+         +––––––––––––––––––+                  |        
          |      #emit       | s = Time.now     |        
          |                  +––––––––––––––––––+        
          |                  |       #emit      |        
