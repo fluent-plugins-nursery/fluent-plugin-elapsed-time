@@ -19,13 +19,13 @@ This illustration draws how fluent-plugin-elapsed-time measures elapsed times.
      |   Input     |    |  ElapsedTime |   |   Output     |
      +––––––+––––––+    +––––––+–––––––+   +––––––+–––––––+
 #on_message |                  |                  |        
-            +––––––––––––––––––+                  |        
+            +––––––––––––––––––>                  |        
             |      #emit       | start = Time.now |        
-            |                  +––––––––––––––––––+        
+            |                  +––––––––––––––––––>        
             |                  |       #emit      |        
-            |                  +––––––––––––––––––+        
+            |                  <– – – – – – – – – +        
             |                  | elapsed = Time.now - start
-            +––––––––––––––––––+                  |         
+            <– – – – – - – – – +                  |         
             |                  |                  |        
             +                  +                  +
 ```
