@@ -12,7 +12,7 @@ Use RubyGems:
 
 ## Illustration
 
-This illustration draws how fluent-plugin-elapsed-time works.
+This illustration draws how fluent-plugin-elapsed-time measures elapsed times.
 
 ```
      +–––––––––––––+    +––––––––––––––+   +––––––––––––––+
@@ -20,11 +20,11 @@ This illustration draws how fluent-plugin-elapsed-time works.
      +––––––+––––––+    +––––––+–––––––+   +––––––+–––––––+
 #on_message |                  |                  |        
             +––––––––––––––––––+                  |        
-            |      #emit       | s = Time.now     |        
+            |      #emit       | start = Time.now |        
             |                  +––––––––––––––––––+        
             |                  |       #emit      |        
             |                  +––––––––––––––––––+        
-            |                  | Time.now - s     |        
+            |                  | elapsed = Time.now - start
             +––––––––––––––––––+                  |         
             |                  |                  |        
             +                  +                  +
