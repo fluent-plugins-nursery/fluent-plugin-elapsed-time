@@ -15,19 +15,21 @@ Use RubyGems:
 This illustration draws how fluent-plugin-elapsed-time measures elapsed times.
 
 ```
-     +–––––––––––––+    +––––––––––––––+   +––––––––––––––+
-     |   Input     |    |  ElapsedTime |   |   Output     |
-     +––––––+––––––+    +––––––+–––––––+   +––––––+–––––––+
-#on_message |                  |                  |        
-            +––––––––––––––––––>                  |        
-            |      #emit       | start = Time.now |        
-            |                  +––––––––––––––––––>        
-            |                  |       #emit      |        
-            |                  <– – – – – – – – – +        
-            |                  | elapsed = Time.now - start
-            <– – – – – - – – – +                  |         
-            |                  |                  |        
-            +                  +                  +
+     +–––––––––––––+    +––––––––––––––+   +––––––––––––––+   +–––––––––––––––+
+     |   Input     |    |  ElapsedTime |   |   Output     |   |   Output      |
+     +––––––+––––––+    +––––––+–––––––+   +––––––+–––––––+   +–––––––+–––––––+
+#on_message |                  |                  |                   |
+            +––––––––––––––––––>                  |                   |
+            |      #emit       | start = Time.now |                   |
+            |                  +––––––––––––––––––>                   |
+            |                  |      #emit       +–––––––––––––––––––>        
+            |                  |                  |     #emit         |        
+            |                  |                  <– – – – –  – – – – +        
+            |                  <– – – – – – – – – +                   |
+            |                  | elapsed = Time.now - start           |
+            <– – – – – - – – – +                  |                   |
+            |                  |                  |                   |
+            +                  +                  +                   +
 ```
 
 ## Configuration
