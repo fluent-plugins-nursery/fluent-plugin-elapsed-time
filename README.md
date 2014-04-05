@@ -36,7 +36,7 @@ This illustration draws how fluent-plugin-elapsed-time measures elapsed times.
 
 Example:
 
-Following example measures the max and average time taken to process [fluent-plugin-grep](https://github.com/sonots/fluent-plugin-grep) => [fluent-plugin-parser](https://github.com/tagomoris/fluent-plugin-parser) => out_stdout chain in messages. Please notice that this plugin measures the total processing time until match chain finishes.
+Following example measures the max and average time taken to process [fluent-plugin-grep](https://github.com/sonots/fluent-plugin-grep) => out_stdout chain in messages. Please notice that this plugin measures the total processing time until match chain finishes.
 
 ```apache
 <match greped.**>
