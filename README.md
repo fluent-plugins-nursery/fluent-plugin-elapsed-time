@@ -115,6 +115,14 @@ where `max` and `avg` are the maximum and average elapsed times, and `num` is th
         # after @interval later
         elapsed: {"max":0,"avg":0,"num"=>0}
 
+## Relatives
+
+* [fluent-plugin-measure_time](https://github.com/sonots/fluent-plugin-measure_time)
+
+  * This plugin make possible to measure the elapsed time of not only output plugins but also input plugins.
+  * Also, this plugin has a flexibility to measure arbitrary methods of plugins. 
+  * But, this does not have flexibility of output messages such as `add_tag_prefix`, `aggregate` options because of its limitaion of internal mechanism.
+
 ## ChangeLog
 
 See [CHANGELOG.md](CHANGELOG.md) for details.
