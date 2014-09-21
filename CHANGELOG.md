@@ -1,3 +1,9 @@
+## 0.0.6 (2014/09/22)
+
+Changes:
+
+* Change fluentd dependency from '~>' to '>='
+
 ## 0.0.5 (2014/02/04)
 
 Enhancement:
