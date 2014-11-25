@@ -1,3 +1,9 @@
+## 0.0.7 (2014/11/22)
+
+Changes:
+
+* Remove fluentd version dependency
+
 ## 0.0.6 (2014/09/22)
 
 Changes:
