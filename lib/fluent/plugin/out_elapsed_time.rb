@@ -7,6 +7,11 @@ module Fluent
       define_method("log") { $log }
     end
 
+    # Define `router` method of v0.12 to support v0.10 or earlier
+    unless method_defined?(:router)
+      define_method("router") { Fluent::Engine }
+    end
+
     config_param :tag, :string, :default => 'elapsed'
     config_param :add_tag_prefix, :string, :default => nil
     config_param :remove_tag_prefix, :string, :default => nil
@@ -143,7 +148,7 @@ module Fluent
         avg = num == 0 ? 0 : elapsed.map(&:to_f).inject(:+) / num.to_f
         messages[tag] = {"max" => max, "avg" => avg, "num" => num}
       end
-      messages.each {|tag, message| Engine.emit(tag, Engine.now, message) }
+      messages.each {|tag, message| router.emit(tag, Engine.now, message) }
     end
 
     private
