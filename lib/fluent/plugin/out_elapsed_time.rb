@@ -87,7 +87,13 @@ module Fluent
       chain = NullOutputChain.instance
       start = Time.now
       es.each do |time, record|
-        @outputs.each {|output| output.emit(tag, OneEventStream.new(time, record), chain) }
+        @outputs.each {|output|
+          if output.respond_to?(:emit_events)
+            output.emit_events(tag, OneEventStream.new(time, record))
+          else
+            output.emit(tag, OneEventStream.new(time, record), chain)
+          end
+        }
         finish = Time.now
         emit_tag = @tag_proc.call(tag)
         elapsed(emit_tag) << (finish - start).to_f
@@ -98,7 +104,13 @@ module Fluent
     def emit_es(tag, es)
       chain = NullOutputChain.instance
       t = Time.now
-      @outputs.each {|output| output.emit(tag, es, chain) }
+      @outputs.each {|output|
+        if output.respond_to?(:emit_events)
+          output.emit_events(tag, es)
+        else
+          output.emit(tag, es, chain)
+        end
+      }
       emit_tag = @tag_proc.call(tag)
       elapsed(emit_tag) << (Time.now - t).to_f
     end
