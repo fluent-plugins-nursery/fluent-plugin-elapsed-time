@@ -65,44 +65,44 @@ describe Fluent::ElapsedTimeOutput do
     context 'each message' do
       let(:config) { CONFIG + %[each message]}
       before do
-        Fluent::Engine.stub(:now).and_return(time)
+        allow(Fluent::Engine).to receive(:now).and_return(time)
       end
       it {
         driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
-        driver.instance.elapsed.size.should == 4
+        expect(driver.instance.elapsed.size).to eq(4)
       }
     end
 
     context 'each es' do
       let(:config) { CONFIG + %[each es]}
       before do
-        Fluent::Engine.stub(:now).and_return(time)
+        allow(Fluent::Engine).to receive(:now).and_return(time)
       end
       it {
         driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
-        driver.instance.elapsed.size.should == 4
+        expect(driver.instance.elapsed.size).to eq(4)
       }
     end
 
     context 'each message with aggregate tag' do
       let(:config) { CONFIG + %[each message\naggregate tag\nadd_tag_prefix elapsed]}
       before do
-        Fluent::Engine.stub(:now).and_return(time)
+        allow(Fluent::Engine).to receive(:now).and_return(time)
       end
       it {
         driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
-        driver.instance.elapsed("elapsed.#{tag}").size.should == 4
+        expect(driver.instance.elapsed("elapsed.#{tag}").size).to eq(4)
       }
     end
 
     context 'each es with aggregate tag' do
       let(:config) { CONFIG + %[each es\naggregate tag\nadd_tag_prefix elapsed]}
       before do
-        Fluent::Engine.stub(:now).and_return(time)
+        allow(Fluent::Engine).to receive(:now).and_return(time)
       end
       it {
         driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
-        driver.instance.elapsed("elapsed.#{tag}").size.should == 4
+        expect(driver.instance.elapsed("elapsed.#{tag}").size).to eq(4)
         driver.instance.flush_emit
       }
     end
@@ -110,36 +110,36 @@ describe Fluent::ElapsedTimeOutput do
     context 'remove_tag_slice' do
       let(:config) { CONFIG + %[remove_tag_slice 0..-2\naggregate tag\nadd_tag_prefix elapsed]}
       before do
-        Fluent::Engine.stub(:now).and_return(time)
+        allow(Fluent::Engine).to receive(:now).and_return(time)
       end
       let(:expected_tag) { tag.split('.')[0..-2].join('.') }
       it {
         driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
-        driver.instance.elapsed("elapsed.#{expected_tag}").size.should == 4
+        expect(driver.instance.elapsed("elapsed.#{expected_tag}").size).to eq(4)
       }
     end
 
     context 'zero_emit true' do
       let(:config) { CONFIG + %[zero_emit true]}
       before do
-        Fluent::Engine.stub(:now).and_return(time)
+        allow(Fluent::Engine).to receive(:now).and_return(time)
       end
       it {
         driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
-        driver.instance.flush_emit["elapsed"]["num"].should == 4
-        driver.instance.flush_emit["elapsed"].should == {"max" => 0, "avg" => 0, "num" => 0}
+        expect(driver.instance.flush_emit["elapsed"]["num"]).to eq(4)
+        expect(driver.instance.flush_emit["elapsed"]).to eq({"max" => 0, "avg" => 0, "num" => 0})
       }
     end
 
     context 'zero_emit false' do
       let(:config) { CONFIG }
       before do
-        Fluent::Engine.stub(:now).and_return(time)
+        allow(Fluent::Engine).to receive(:now).and_return(time)
       end
       it {
         driver.run { messages.each {|message| driver.emit({'message' => message}, time) } }
-        driver.instance.flush_emit["elapsed"]["num"].should == 4
-        driver.instance.flush_emit.should == {}
+        expect(driver.instance.flush_emit["elapsed"]["num"]).to eq(4)
+        expect(driver.instance.flush_emit).to eq({})
       }
     end
   end
