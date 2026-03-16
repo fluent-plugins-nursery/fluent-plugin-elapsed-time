@@ -1,3 +1,9 @@
+## 0.0.9 (2026/03/16)
+
+Fixes:
+
+* gem: Remove obsoleted #has_rdoc= using to solve install error
+
 ## 0.0.8 (2017/02/09)
 
 Enhancement:
