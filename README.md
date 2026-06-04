@@ -1,6 +1,6 @@
 # fluent-plugin-elapsed-time
 
-[![Build Status](https://secure.travis-ci.org/sonots/fluent-plugin-elapsed-time.png?branch=master)](http://travis-ci.org/sonots/fluent-plugin-elapsed-time)
+[![test](https://github.com/fluent-plugins-nursery/fluent-plugin-elapsed-time/actions/workflows/test.yml/badge.svg)](https://github.com/fluent-plugins-nursery/fluent-plugin-elapsed-time/actions/workflows/test.yml)
 
 Fluentd plugin to measure elapsed time to process messages
 
